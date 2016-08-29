@@ -2,7 +2,7 @@
 
 ## Overview
 
-This playbook combines joining a machine to an AD domain. 
+This playbook joins a machine to an AD domain. 
 
 So far, only `CentOS 7` machines are supported in this playbook because of the reliance of `realmd`. The playbook may be updated in the future to support `CentOS 6` machines, as you can use `adcli` to join machines to active directory, but this is much more of a manual process.
 
@@ -85,6 +85,7 @@ There are a couple of things to keep in mind when running this playbook:
 - Every changed file is backed up in place, so do not despair if something goes awry! 
 
 Here is a list of files that *could be* changed/created by the playbook:
+
 - /etc/nsswitch.conf
 - /etc/chrony.conf
 - /etc/ssh/sshd_config
