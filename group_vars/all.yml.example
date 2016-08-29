@@ -53,8 +53,10 @@ realmd_default_shell: "/bin/bash"
 # The place to create a directory computer accounts
 realmd_computer_ou: "OU=Linux Computers,DC=domain,DC=example,DC=com"
 
-# Overrides the default name when creating the computer account
-realmd_computer_name: "SERVER01"
+# By default, this playbook will use the short hostname of the host
+# as the computer name. If you want to add a prefix to this, then
+# add this here.
+realmd_computer_name_prefix: ""
 
 # Use the full name and domain as the user's login name reported to NSS
 realmd_use_fully_qualified_names: false

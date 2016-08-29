@@ -4,5 +4,5 @@ default-shell = {{ realmd_default_shell }}
 
 [{{ ad_domain.lower() }}]
 computer-ou = {{ realmd_computer_ou }}
-computer-name = {{ realmd_computer_name }}
+computer-name = {{ realmd_computer_name_prefix.upper() + inventory_hostname_short.upper() }}
 fully-qualified-names = {{ realmd_use_fully_qualified_names }}
