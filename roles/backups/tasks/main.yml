@@ -1,0 +1,26 @@
+---
+
+# ------------------------------------------------------------------------
+# ENSURE THAT THE BACKUP DIRECTORY EXISTS
+# ------------------------------------------------------------------------
+
+- name: "Create the backup directory in {{ back_up_dir }}"
+  file: 
+    path: "{{ back_up_dir }}"
+    state: directory
+
+# ------------------------------------------------------------------------
+# MOVE FILES TO THE BACKUP DIRECTORY
+# ------------------------------------------------------------------------
+
+- debug: 
+    msg: "{{ backed_up_files | map(attribute='path') }}"
+
+- find: 
+    paths: '{{ backed_up_files | map(attribute="path") | unique | join(",") }}'
+    patterns: '{{ backed_up_files | map(attribute="name_pattern") | unique | join(",") }}'
+  register: found_files
+
+- name: "Moving backups to {{ back_up_dir }}"
+  shell: "mv {{ item.path }} {{ back_up_dir }}" 
+  with_items: "{{ found_files.files }}"

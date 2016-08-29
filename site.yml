@@ -1,0 +1,47 @@
+---
+
+# ------------------------------------------------------------------------
+# CHECK HOST OPERATING SYSTEM AND VAULT VARIABLES
+# ------------------------------------------------------------------------
+- name: Ensure that the host computer can run this playbook
+  hosts: all
+  vars_files:
+    - group_vars/vault.yml
+  tasks:
+    - assert: 
+        that: 
+          - ansible_distribution == "CentOS"
+          - ansible_distribution_major_version == "7"
+          - vault_ad_user is defined and vault_ad_pass is defined
+
+# ------------------------------------------------------------------------
+# MAKING A HOME DIRECTORY ON LOGIN
+# ------------------------------------------------------------------------
+- name: Make sure a home directory is created on login with oddjob-mkhomedir
+  hosts: all
+  remote_user: "{{ playbook_remote_user }}"
+  become: true
+  roles:
+    - { role: mkhomedir, when: automatically_mkhomedir }
+
+# ------------------------------------------------------------------------
+# ACTIVE DIRECTORY CONFIGURATION
+# ------------------------------------------------------------------------
+- name: Bind an Active Directory domain to our inventory machines. 
+  hosts: all
+  remote_user: "{{ playbook_remote_user }}"
+  become: true
+  vars_files:
+    - group_vars/vault.yml
+  roles:
+    - ad
+
+# ------------------------------------------------------------------------
+# CENTRALIZE BACKUPS
+# ------------------------------------------------------------------------
+- name: Move all backed up files created by this playbook to a centralized location.
+  hosts: all
+  remote_user: "{{ playbook_remote_user }}"
+  become: true
+  roles:
+    - backups

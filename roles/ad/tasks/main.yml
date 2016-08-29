@@ -1,0 +1,137 @@
+---
+
+# ------------------------------------------------------------------------
+# UPDATE SOFTWARE AND INSTALL PACKAGES NEEDED
+# ------------------------------------------------------------------------
+
+- name: "Update system software"
+  yum: name=* state=latest
+
+- name: "Install packages needed for active directory, samba, keroberos, and sssd"
+  yum: 
+    name: "{{ item }}" 
+    state: latest
+  with_items:
+    - adcli
+    - krb5-workstation
+    - samba
+    - samba-common
+    - sssd
+    - authconfig
+    - chrony
+
+- name: "Install pip"
+  easy_install: name=pip
+
+- name: "Install pexpect using pip"
+  pip: name=pexpect
+
+# ------------------------------------------------------------------------
+# CHANGE TIMEZONE (IF IT'S NOT ALREADY SET CORRECTLY)
+# ------------------------------------------------------------------------
+
+- name: Check current timezone before changing it
+  stat: path=/etc/localtime
+  register: current_zone
+  always_run: yes
+
+- name: "Set timezone to {{ timezone }}"
+  file: 
+    src: "/usr/share/zoneinfo/{{ timezone }}"
+    dest: /etc/localtime 
+    owner: root 
+    group: root 
+    state: link 
+    force: yes
+  when: (not current_zone.stat.exists or (current_zone.stat.islnk is defined and not current_zone.stat.islnk)) or (current_zone.stat.islnk is defined and current_zone.stat.islnk and current_zone.stat.lnk_source.match(timezone))
+
+# ------------------------------------------------------------------------
+# CONFIGURE CHRONY
+# ------------------------------------------------------------------------
+
+- name: "If desired, we remove the the default ntp server pools in the chrony conf file. The original file is backed up."
+  lineinfile: 
+    dest: "/etc/chrony.conf"
+    backup: yes
+    regexp: '^server (?!({{ ntp_servers | join("|", attribute="addr") }}))'
+    owner: root 
+    group: root
+    state: absent
+  when: use_default_ntp_servers != true
+  notify: restart chronyd
+
+- name: "We add in our own ntp server/s in the chrony conf file. The original file is backed up."
+  lineinfile: 
+    dest: "/etc/chrony.conf"
+    backup: yes
+    owner: root 
+    group: root
+    insertbefore: BOF
+    line: "server {{ item.addr }}"
+  with_items: "{{ ntp_servers }}"
+  when: use_default_ntp_servers != true
+  notify: restart chronyd
+
+- name: "Enable the chrony daemon service to run on boot."
+  service: name=chronyd enabled=yes
+
+- name: "Start the chrony daemon service"
+  service: name=chronyd state=started
+
+# ------------------------------------------------------------------------
+# CONFIGURE SSH
+# ------------------------------------------------------------------------
+
+- name: "Remove unwanted SSH options in /etc/ssh/sshd_config. The original file is backed up."
+  lineinfile:
+    dest: "/etc/ssh/sshd_config"
+    backup: yes
+    regexp: "{{ item.regexp }}"
+    owner: root 
+    group: root
+    state: absent
+  with_items:
+    - { regexp: "^KerberosAuthentication (?!yes)" }
+    - { regexp: "^PasswordAuthentication (?!yes)" }
+  notify: restart sshd
+
+- name: "Edit /etc/ssh/sshd_config to allow password logins and kerberos authentication. The original file is backed up."
+  lineinfile: 
+    dest: "/etc/ssh/sshd_config"
+    backup: yes
+    owner: root 
+    group: root
+    line: "{{ item.line }}"
+    insertafter: "{{ item.insertafter }}"
+  with_items:
+    - { line: "KerberosAuthentication yes", insertafter: "^# Kerberos options" }
+    - { line: "PasswordAuthentication yes", insertafter: "^#PermitEmptyPasswords" }
+  notify: restart sshd
+
+- meta: flush_handlers
+
+# ------------------------------------------------------------------------
+# CONFIGURE KRB5.CONF
+# ------------------------------------------------------------------------
+
+- name: "Configure /etc/krb5.conf"
+  template: 
+    src: krb5.conf.fedora6.j2 
+    dest: /etc/krb5.conf
+  when: ansible_distribution_major_version == "6"
+
+- name: "Configure /etc/krb5.conf"
+  template: 
+    src: krb5.conf.fedora7.j2 
+    dest: /etc/krb5.conf
+  when: ansible_distribution_major_version == "7"
+
+# ------------------------------------------------------------------------
+# JOIN MACHINE TO AD DOMAIN
+# ------------------------------------------------------------------------
+
+- name: "Join {{ ansible_hostname }} to AD domain, {{ ad_domain.upper() }}"
+  expect:
+    command: /bin/bash -c "/usr/sbin/adcli join --user={{ vault_ad_user }} {{ ad_domain.upper() }}"
+    responses:
+      (?i)password: "{{ vault_ad_pass }}"

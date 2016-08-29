@@ -1,0 +1,21 @@
+---
+
+# ------------------------------------------------------------------------
+# BACKUPS DEFAULT VARIABLES
+# ------------------------------------------------------------------------
+
+# Files that have been altered during the playbook's execution and thus may
+# be backed up. Note that the name includes the glob pattern that the 
+# backups will be matched on
+backed_up_files:
+  - { path: "/etc/sysconfig", name_pattern: "network.*~" }
+  - { path: "/etc", name_pattern: "yp.conf.*~" }
+  - { path: "/etc", name_pattern: "nsswitch.conf.*~" }
+  - { path: "/etc", name_pattern: "chrony.conf.*~" }
+  - { path: "/etc", name_pattern: "realmd.conf.*~" }
+  - { path: "/etc/ssh", name_pattern: "sshd_config.*~" }
+  - { path: "/etc", name_pattern: "krb5.conf.*~" }
+  - { path: "/etc/sssd", name_pattern: "sssd.conf.*~" }
+
+# The default directory on the remote machine that backups will be moved to
+back_up_dir: "/etc/backups"

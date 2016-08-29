@@ -1,0 +1,11 @@
+---
+
+# ------------------------------------------------------------------------
+# AD HANDLERS
+# ------------------------------------------------------------------------
+
+- name: restart sshd
+  service: name=sshd state=restarted
+
+- name: restart chronyd
+  service: name=chronyd state=restarted

@@ -1,0 +1,42 @@
+---
+
+# ------------------------------------------------------------------------
+# UPDATE SOFTWARE AND INSTALL PACKAGES NEEDED
+# ------------------------------------------------------------------------
+
+- name: Update system software
+  yum: name=* state=latest
+
+- name: "Install oddjob-mkhomedir, oddjob, and authconfig"
+  yum: name={{ item }} state=latest
+  with_items:
+    - oddjob-mkhomedir
+    - oddjob
+    - authconfig
+
+# ------------------------------------------------------------------------
+# CONFIGURE THE ODDJOB DAEMON SERVICE
+# ------------------------------------------------------------------------
+
+- name: Enable the oddjob daemon to run on boot
+  service: name=oddjobd enabled=yes
+
+- name: Start the oddjob daemon
+  service: name=oddjobd state=started
+  register: oddjobd_result
+  ignore_errors: yes
+
+- name: Restart the messagebus if we couldn't start the oddjob daemon
+  service: name=messagebus state=restarted
+  when: oddjobd_result | failed
+
+- name: Try to start the oddjob daemon again if we couldn't the first time
+  service: name=oddjobd state=started
+  when: oddjobd_result | failed
+
+# ------------------------------------------------------------------------
+# USE AUTHCONFIG TO MAKE ODDJOBD CREATE DIRECTORY UPON LOGIN
+# ------------------------------------------------------------------------
+
+- name: Update authentication mechanism to tell oddjob to create the directory automatically upon login
+  command: /usr/sbin/authconfig --enablemkhomedir --update

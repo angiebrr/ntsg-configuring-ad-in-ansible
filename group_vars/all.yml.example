@@ -1,0 +1,76 @@
+---
+
+# ------------------------------------------------------------------------
+# ANSIBLE SPECIFIC VARS
+# ------------------------------------------------------------------------
+
+# User that ansible will use to log in with
+playbook_remote_user: username
+
+# ------------------------------------------------------------------------
+# MKHOMEDIR VARS
+# ------------------------------------------------------------------------
+
+# Whether or not to run the mkhomedir role to automatically create a 
+# directory on login using oddjob-mkhomedir.
+automatically_mkhomedir: true
+
+# Look at the AD AND REALMD VARS section for the directory it will create 
+# it in
+
+# ------------------------------------------------------------------------
+# NTP VARS
+# ------------------------------------------------------------------------
+
+timezone: "America/Boise"
+
+# Whether or not you want to use the pool servers that come default with
+# chrony, or if you want to specify an NTP server below in ntp_server.
+use_default_ntp_servers: false
+
+# Your preferred ntp servers. This has no effect if use_default_ntp_server
+# is true.
+ntp_servers: 
+  - addr: 0.pool.ntp.org
+  - addr: 1.pool.ntp.org
+
+# ------------------------------------------------------------------------
+# AD AND REALMD VARS
+# See https://www.freedesktop.org/software/realmd/docs/realmd-conf.html
+# ------------------------------------------------------------------------
+
+# The active directory realm / domain. Will be used as the keroberos 
+# domain as well.
+ad_domain: AD.DOMAIN.COM
+
+# Override the user's home directory for the AD domain
+realmd_default_homedir: "/home/%D/%U"
+
+# The default shell to use if the provider does not provide one during
+# lookup. This option supersedes any other shell options if it takes effect
+realmd_default_shell: "/bin/bash"
+
+# The place to create a directory computer accounts
+realmd_computer_ou: "OU=Linux Computers,DC=domain,DC=example,DC=com"
+
+# Overrides the default name when creating the computer account
+realmd_computer_name: "SERVER01"
+
+# Use the full name and domain as the user's login name reported to NSS
+realmd_use_fully_qualified_names: false
+
+# If you would like to restrict access to your server to certain groups,
+# then modify this variable to contain a yaml list of group name(s).
+# Example:
+# realmd_allowed_groups:
+#	- group_name: adgroup1
+#	- group_name: adgroup2
+realmd_allowed_groups: []
+
+# ------------------------------------------------------------------------
+# VAULT VARS
+# ------------------------------------------------------------------------
+# Be sure to include these variables in your own group_vars/vault.yml file
+# Note that this user needs to be able add/remove computers
+# vault_ad_user: <AD username>
+# vault_ad_pass: <AD password>

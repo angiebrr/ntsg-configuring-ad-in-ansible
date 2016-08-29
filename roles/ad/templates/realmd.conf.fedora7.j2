@@ -1,0 +1,8 @@
+[users]
+default-home = {{ realmd_default_homedir }}
+default-shell = {{ realmd_default_shell }}
+
+[{{ ad_domain.lower() }}]
+computer-ou = {{ realmd_computer_ou }}
+computer-name = {{ realmd_computer_name }}
+fully-qualified-names = {{ realmd_use_fully_qualified_names }}
