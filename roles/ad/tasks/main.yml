@@ -155,7 +155,6 @@
     name: "{{ item.group_name }}"
     state: present
   with_items: "{{ ad_sudoer_groups }}"
-  when: ad_sudoer_groups|length > 0
 
 - name: "Add the given list of groups to have passwordless sudo. The sudoers file is backed up."
   blockinfile:
@@ -166,4 +165,3 @@
     block: |
       %{{ item.group_name }} ALL=(ALL) NOPASSWD: ALL
   with_items: "{{ ad_sudoer_groups }}"
-  when: ad_sudoer_groups|length > 0
