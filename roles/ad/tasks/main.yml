@@ -145,5 +145,5 @@
 # ------------------------------------------------------------------------
 - name: "Allow certain groups to log in to AD domain"
   command: /usr/sbin/realm permit -R {{ ad_domain.lower() }} -g {{ item.group_name }}
-  with_items: realmd_allowed_groups
+  with_items: "{{ realmd_allowed_groups }}"
   when: realmd_allowed_groups|length > 0
