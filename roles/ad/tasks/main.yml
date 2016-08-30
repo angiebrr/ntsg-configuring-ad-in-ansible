@@ -131,7 +131,7 @@
     command: /bin/bash -c "/usr/sbin/realm join --user={{ vault_ad_user }} {{ ad_domain.upper() }}"
     responses:
       (?i)password: "{{ vault_ad_pass }}"
-  when: ad_domain.lower() not in joined_domains
+  when: ad_domain.lower() not in joined_domains.stdout
 
 # ------------------------------------------------------------------------
 # DENY ALL USERS
