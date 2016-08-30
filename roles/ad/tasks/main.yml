@@ -120,7 +120,7 @@
 # JOIN MACHINE TO AD DOMAIN
 # ------------------------------------------------------------------------
 
--name: "Check if {{ ansible_hostname }} is joined to AD domain, {{ ad_domain.upper() }}"
+- name: "Check if {{ ansible_hostname }} is joined to AD domain, {{ ad_domain.upper() }}"
  command: /bin/bash -c "/usr/sbin/realm list"
  register: joined_domains
  always_run: yes
@@ -131,7 +131,7 @@
     command: /bin/bash -c "/usr/sbin/realm join --user={{ vault_ad_user }} {{ ad_domain.upper() }}"
     responses:
       (?i)password: "{{ vault_ad_pass }}"
-  when: '{{ ad_domain.lower() }}' not in joined_domains
+  when: ad_domain.lower() not in joined_domains
 
 # ------------------------------------------------------------------------
 # DENY ALL USERS
