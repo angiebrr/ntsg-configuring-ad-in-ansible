@@ -13,7 +13,7 @@
     state: latest
   with_items:
     - adcli
-    - krb5-workstation
+    - realmd
     - samba
     - samba-common
     - sssd
@@ -111,20 +111,10 @@
 - meta: flush_handlers
 
 # ------------------------------------------------------------------------
-# CONFIGURE KRB5.CONF
+# CONFIGURE REALMD
 # ------------------------------------------------------------------------
-
-- name: "Configure /etc/krb5.conf"
-  template: 
-    src: krb5.conf.fedora6.j2 
-    dest: /etc/krb5.conf
-  when: ansible_distribution_major_version == "6"
-
-- name: "Configure /etc/krb5.conf"
-  template: 
-    src: krb5.conf.fedora7.j2 
-    dest: /etc/krb5.conf
-  when: ansible_distribution_major_version == "7"
+- name: "Configure /etc/realmd.conf"
+  template: src=realmd.conf.fedora7.j2 dest=/etc/realmd.conf owner=root group=root mode=0600
 
 # ------------------------------------------------------------------------
 # JOIN MACHINE TO AD DOMAIN
@@ -132,6 +122,21 @@
 
 - name: "Join {{ ansible_hostname }} to AD domain, {{ ad_domain.upper() }}"
   expect:
-    command: /bin/bash -c "/usr/sbin/adcli join --user={{ vault_ad_user }} {{ ad_domain.upper() }}"
+    command: /bin/bash -c "/usr/sbin/realm join --user={{ vault_ad_user }} {{ ad_domain.upper() }}"
     responses:
       (?i)password: "{{ vault_ad_pass }}"
+
+# ------------------------------------------------------------------------
+# DENY ALL USERS
+# ------------------------------------------------------------------------
+- name: "Deny all users and groups to log in to AD domain"
+  command: /usr/sbin/realm deny -R {{ ad_domain.lower() }} --all
+  when: realmd_allowed_groups|length > 0
+
+# ------------------------------------------------------------------------
+# ALLOW A GROUP
+# ------------------------------------------------------------------------
+- name: "Deny all users and groups to log in to AD domain"
+  command: /usr/sbin/realm permit -R {{ ad_domain.lower() }} -g {{ item.group_name }}
+  with_items: realmd_allows_groups
+  when: realmd_allowed_groups|length > 0
