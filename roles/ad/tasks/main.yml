@@ -157,11 +157,13 @@
   with_items: "{{ ad_sudoer_groups }}"
   when: ad_sudoer_groups|length > 0
 
-- name: "Add the given list of groups to have passwordless sudo"
-  lineinfile:
+- name: "Add the given list of groups to have passwordless sudo. The sudoers file is backed up."
+  blockinfile:
     dest: "/etc/sudoers"
+    backup: yes
     state: present
-    regexp: "^%{{ item.group_name }}"
-    line: "%{{ item.group_name }} ALL=(ALL) NOPASSWD: ALL"
+    marker: "# {mark} ANSIBLE MANAGED BLOCK FOR SUDOER GROUP {{ item.group_name }}"
+    block: |
+      %{{ item.group_name }} ALL=(ALL) NOPASSWD: ALL
   with_items: "{{ ad_sudoer_groups }}"
   when: ad_sudoer_groups|length > 0
