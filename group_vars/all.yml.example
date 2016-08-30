@@ -70,6 +70,13 @@ realmd_use_fully_qualified_names: false
 #	- group_name: adgroup2
 realmd_allowed_groups: []
 
+# If you would like to ensure that certain groups have passwordless sudo,
+# then put those groups here
+# ad_sudoer_groups:
+#	- group_name: group1
+#	- group_name: group2
+ad_sudoer_groups: []
+
 # ------------------------------------------------------------------------
 # REALMD HOST NAME OVERRIDE
 # ------------------------------------------------------------------------

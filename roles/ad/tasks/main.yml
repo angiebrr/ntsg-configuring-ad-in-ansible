@@ -134,16 +134,34 @@
   when: ad_domain.lower() not in joined_domains.stdout
 
 # ------------------------------------------------------------------------
-# DENY ALL USERS
+# ALLOW ONLY A SPECIFIED LIST OF GROUPS TO LOGIN
 # ------------------------------------------------------------------------
+
 - name: "Deny all users and groups to log in to AD domain"
   command: /usr/sbin/realm deny -R {{ ad_domain.lower() }} --all
   when: realmd_allowed_groups|length > 0
 
-# ------------------------------------------------------------------------
-# ALLOW A GROUP
-# ------------------------------------------------------------------------
 - name: "Allow certain groups to log in to AD domain"
   command: /usr/sbin/realm permit -R {{ ad_domain.lower() }} -g {{ item.group_name }}
   with_items: "{{ realmd_allowed_groups }}"
   when: realmd_allowed_groups|length > 0
+
+# ------------------------------------------------------------------------
+# ALLOW ONLY A SPECIFIED LIST OF GROUPS TO LOGIN
+# ------------------------------------------------------------------------
+
+- name: "Ensure the list of groups for passwordless sudo exist"
+  group:
+    name: "{{ item.group_name }}"
+    state: present
+  with_items: "{{ ad_sudoer_groups }}"
+  when: ad_sudoer_groups|length > 0
+
+- name: "Add the given list of groups to have passwordless sudo"
+  lineinfile:
+    dest: "/etc/sudoers"
+    state: present
+    regexp: "^%{{ item.group_name }}"
+    line: "%{{ item.group_name }} ALL=(ALL) NOPASSWD: ALL"
+  with_items: "{{ ad_sudoer_groups }}"
+  when: ad_sudoer_groups|length > 0
