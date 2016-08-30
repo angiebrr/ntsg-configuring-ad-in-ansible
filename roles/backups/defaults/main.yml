@@ -13,6 +13,7 @@ backed_up_files:
   - { path: "/etc", name_pattern: "nsswitch.conf.*~" }
   - { path: "/etc", name_pattern: "chrony.conf.*~" }
   - { path: "/etc", name_pattern: "realmd.conf.*~" }
+  - { path: "/etc", name_pattern: "sudoers.*~" }
   - { path: "/etc/ssh", name_pattern: "sshd_config.*~" }
   - { path: "/etc", name_pattern: "krb5.conf.*~" }
   - { path: "/etc/sssd", name_pattern: "sssd.conf.*~" }
