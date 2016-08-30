@@ -162,7 +162,7 @@
     dest: "/etc/sudoers"
     backup: yes
     state: present
-    marker: "# {mark} ANSIBLE MANAGED BLOCK FOR SUDOER GROUP {{ item.group_name }}"
+    marker: "\n# {mark} ANSIBLE MANAGED BLOCK FOR SUDOER GROUP {{ item.group_name }}"
     block: |
       %{{ item.group_name }} ALL=(ALL) NOPASSWD: ALL
   with_items: "{{ ad_sudoer_groups }}"
