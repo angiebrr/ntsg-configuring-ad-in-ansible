@@ -55,7 +55,8 @@ realmd_computer_ou: "OU=Linux Computers,DC=domain,DC=example,DC=com"
 
 # By default, this playbook will use the short hostname of the host
 # as the computer name. If you want to add a prefix to this, then
-# add this here.
+# add this here. If you want to completely override this name, then see
+# REALMD HOST NAME OVERRIDE.
 realmd_computer_name_prefix: ""
 
 # Use the full name and domain as the user's login name reported to NSS
@@ -68,6 +69,15 @@ realmd_use_fully_qualified_names: false
 #	- group_name: adgroup1
 #	- group_name: adgroup2
 realmd_allowed_groups: []
+
+# ------------------------------------------------------------------------
+# REALMD HOST NAME OVERRIDE
+# ------------------------------------------------------------------------
+
+# If you want to override the entire name of the computer explicitly, then
+# include this variable. This should be done on a per-host basis and NOT in 
+# this file (i.e. put it in group_vars/myhostname.yml).
+# realmd_computer_name_override: "MYCOMPUTERNAME"
 
 # ------------------------------------------------------------------------
 # VAULT VARS

@@ -4,5 +4,9 @@ default-shell = {{ realmd_default_shell }}
 
 [{{ ad_domain.lower() }}]
 computer-ou = {{ realmd_computer_ou }}
+{% if realmd_computer_name_override is defined %}
+computer-name = {{ realmd_computer_name_override }}
+{% else %}
 computer-name = {{ realmd_computer_name_prefix.upper() + inventory_hostname_short.upper() }}
+{% endif %}
 fully-qualified-names = {{ realmd_use_fully_qualified_names }}
