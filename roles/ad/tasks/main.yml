@@ -121,10 +121,10 @@
 # ------------------------------------------------------------------------
 
 - name: "Check if {{ ansible_hostname }} is joined to AD domain, {{ ad_domain.upper() }}"
- command: /bin/bash -c "/usr/sbin/realm list"
- register: joined_domains
- always_run: yes
- changed_when: no
+  command: /bin/bash -c "/usr/sbin/realm list"
+  register: joined_domains
+  always_run: yes
+  changed_when: no
 
 - name: "Join {{ ansible_hostname }} to AD domain, {{ ad_domain.upper() }}"
   expect:
