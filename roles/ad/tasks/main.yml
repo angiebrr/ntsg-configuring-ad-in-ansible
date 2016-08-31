@@ -181,7 +181,7 @@
     dest: "/etc/sudoers"
     backup: yes
     regexp: "^%{{ item.group_name }}"
-    line: "%{{ item.group_name }} ALL=(ALL) ALL"
+    line: "%{{ item.group_name }} {{ ad_sudoer_permission_string }}"
     insertafter: "^{{ ad_sudoer_comment_begin_block_regex }}"
     validate: "visudo -cf %s"
   with_items: "{{ ad_sudoer_groups }}"
