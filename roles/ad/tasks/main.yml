@@ -161,7 +161,7 @@
     dest: "/etc/sudoers"
     backup: yes
     regexp: "^{{ ad_sudoer_comment_begin_block_regex }}"
-    line: "\n{{ ad_sudoer_comment_begin_block }}"
+    line: "{{ ad_sudoer_comment_begin_block }}"
     state: present
     validate: "visudo -cf %s"
   when: ad_sudoer_groups|length > 0
@@ -171,7 +171,7 @@
     dest: "/etc/sudoers"
     backup: yes
     regexp: "^{{ ad_sudoer_comment_end_block_regex }}"
-    line: "{{ ad_sudoer_comment_end_block }}\n"
+    line: "{{ ad_sudoer_comment_end_block }}"
     insertafter: "^{{ ad_sudoer_comment_begin_block_regex }}"
     validate: "visudo -cf %s"
   when: ad_sudoer_groups|length > 0
