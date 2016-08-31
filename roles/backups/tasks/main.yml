@@ -13,9 +13,6 @@
 # MOVE FILES TO THE BACKUP DIRECTORY
 # ------------------------------------------------------------------------
 
-- debug: 
-    msg: "{{ backed_up_files | map(attribute='path') }}"
-
 - find: 
     paths: '{{ backed_up_files | map(attribute="path") | unique | join(",") }}'
     patterns: '{{ backed_up_files | map(attribute="name_pattern") | unique | join(",") }}'
