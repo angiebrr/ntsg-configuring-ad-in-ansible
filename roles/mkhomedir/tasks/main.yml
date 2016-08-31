@@ -38,5 +38,24 @@
 # USE AUTHCONFIG TO MAKE ODDJOBD CREATE DIRECTORY UPON LOGIN
 # ------------------------------------------------------------------------
 
+- name: "Create the metadata directory used for idempotence"
+  file: 
+    path: "{{ playbook_metadata_dir }}"
+    state: directory
+
+- name: "Check if authconfig has been used to enable a home directory to be made upon login"
+  command: /bin/bash -c "/bin/cat {{ playbook_metadata_dir }}/mkhomedir_authconfig"
+  register: mkhomedir_metadata
+  always_run: yes
+  changed_when: no
+  ignore_errors: yes
+
 - name: Update authentication mechanism to tell oddjob to create the directory automatically upon login
   command: /usr/sbin/authconfig --enablemkhomedir --update
+  when: "success" in mkhomedir_metadata.stdout
+
+- name: "Register the metadata file for mkhomedir"
+  lineinfile:
+    dest: "{{ playbook_metadata_dir }}/mkhomedir_authconfig"
+    regexp: "^success"
+    line: "success"

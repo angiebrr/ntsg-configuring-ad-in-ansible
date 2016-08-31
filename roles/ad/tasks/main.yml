@@ -137,14 +137,38 @@
 # ALLOW ONLY A SPECIFIED LIST OF GROUPS TO LOGIN
 # ------------------------------------------------------------------------
 
+- name: "Create the metadata directory used for idempotence"
+  file: 
+    path: "{{ playbook_metadata_dir }}"
+    state: directory
+
+- name: "Check if we have already added these groups"
+  command: /bin/bash -c "/bin/cat {{ playbook_metadata_dir }}/{{ ad_domain.lower() }}_ad_allow"
+  register: ad_allow_metadata
+  always_run: yes
+  changed_when: no
+  ignore_errors: yes
+
+- name: "Register the difference between the groups that have been added and the groups listed in the playbook"
+  set_fact:
+    realmd_groups_to_add: "{{ realmd_allowed_groups|map(attribute='group_name')|list|difference(ad_allow_metadata.stdout_lines)|list }}"
+  always_run: yes
+
 - name: "Deny all users and groups to log in to AD domain"
   command: /usr/sbin/realm deny -R {{ ad_domain.lower() }} --all
-  when: realmd_allowed_groups|length > 0
+  when: realmd_groups_to_add | length > 0
 
 - name: "Allow certain groups to log in to AD domain"
-  command: /usr/sbin/realm permit -R {{ ad_domain.lower() }} -g {{ item.group_name }}
-  with_items: "{{ realmd_allowed_groups }}"
-  when: realmd_allowed_groups|length > 0
+  command: /usr/sbin/realm permit -R {{ ad_domain.lower() }} -g {{ item }}
+  with_items: "{{ realmd_groups_to_add }}"
+  when: realmd_groups_to_add | length > 0
+
+- name: "Register the metadata file for allowing ad groups"
+  lineinfile:
+    dest: "{{ playbook_metadata_dir }}/{{ ad_domain.lower() }}_ad_allow"
+    regexp: "^{{ item }}"
+    line: "{{ item }}"
+  with_items: "{{ realmd_groups_to_add }}"
 
 # ------------------------------------------------------------------------
 # ALLOW ONLY A SPECIFIED LIST OF GROUPS TO LOGIN
