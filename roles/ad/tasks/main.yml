@@ -160,21 +160,27 @@
   lineinfile:
     dest: "/etc/sudoers"
     backup: yes
+    regexp: "^# BEGIN ANSIBLE MANAGED BLOCK FOR SUDOER GROUP(S)"
     line: "\n# BEGIN ANSIBLE MANAGED BLOCK FOR SUDOER GROUP(S)"
+    validate: "visudo -cf %s"
   when: ad_sudoer_groups|length > 0
 
 - name: "Add the comment marker for the end of the ansible block for the sudoers file."
   lineinfile:
     dest: "/etc/sudoers"
     backup: yes
+    regexp: "^# END ANSIBLE MANAGED BLOCK FOR SUDOER GROUP(S)"
     line: "# END ANSIBLE MANAGED BLOCK FOR SUDOER GROUP(S)\n"
-    insertafter: "# BEGIN ANSIBLE MANAGED BLOCK FOR SUDOER GROUP(S)"
+    insertafter: "^# BEGIN ANSIBLE MANAGED BLOCK FOR SUDOER GROUP(S)"
+    validate: "visudo -cf %s"
   when: ad_sudoer_groups|length > 0
 
 - name: "Add the given list of groups to have passwordless sudo. The sudoers file is backed up."
   lineinfile:
     dest: "/etc/sudoers"
     backup: yes
+    regexp: 
     line: "%{{ item.group_name }} ALL=(ALL) NOPASSWD: ALL"
-    insertafter: "# BEGIN ANSIBLE MANAGED BLOCK FOR SUDOER GROUP(S)"    
+    insertbefore: "^# END ANSIBLE MANAGED BLOCK FOR SUDOER GROUP(S)"
+    validate: "visudo -cf %s"
   with_items: "{{ ad_sudoer_groups }}"
