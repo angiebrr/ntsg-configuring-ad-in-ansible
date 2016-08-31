@@ -79,8 +79,10 @@ ad_sudoer_groups: []
 
 # If sudoer groups are added, this comment will surround the lines added in 
 # the sudoer file
-ad_sudoer_comment_begin_block: "# BEGIN ANSIBLE MANAGED BLOCK FOR SUDOER GROUP(S)"
-ad_sudoer_comment_end_block: "# END ANSIBLE MANAGED BLOCK FOR SUDOER GROUP(S)"
+ad_sudoer_comment_begin_block: "#BEGIN ANSIBLE MANAGED BLOCK FOR SUDOER GROUP(S)"
+ad_sudoer_comment_begin_block_regex: "#BEGIN"
+ad_sudoer_comment_end_block: "#END ANSIBLE MANAGED BLOCK FOR SUDOER GROUP(S)"
+ad_sudoer_comment_end_block_regex: "#END"
 
 # ------------------------------------------------------------------------
 # REALMD HOST NAME OVERRIDE

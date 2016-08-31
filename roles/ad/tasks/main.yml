@@ -160,7 +160,7 @@
   lineinfile:
     dest: "/etc/sudoers"
     backup: yes
-    regexp: "^{{ ad_sudoer_comment_begin_block }}$"
+    regexp: "^{{ ad_sudoer_comment_begin_block_regex }}"
     line: "\n{{ ad_sudoer_comment_begin_block }}"
     state: present
     validate: "visudo -cf %s"
@@ -170,9 +170,9 @@
   lineinfile:
     dest: "/etc/sudoers"
     backup: yes
-    regexp: "^{{ ad_sudoer_comment_end_block }}$"
+    regexp: "^{{ ad_sudoer_comment_end_block_regex }}"
     line: "{{ ad_sudoer_comment_end_block }}\n"
-    insertafter: "^{{ ad_sudoer_comment_begin_block }}$"
+    insertafter: "^{{ ad_sudoer_comment_begin_block_regex }}"
     validate: "visudo -cf %s"
   when: ad_sudoer_groups|length > 0
 
@@ -180,8 +180,8 @@
   lineinfile:
     dest: "/etc/sudoers"
     backup: yes
-    regexp: 
+    regexp: "^%{{ item.group_name }}"
     line: "%{{ item.group_name }} ALL=(ALL) NOPASSWD: ALL"
-    insertafter: "^{{ ad_sudoer_comment_begin_block }}$"
+    insertafter: "^{{ ad_sudoer_comment_begin_block_regex }}"
     validate: "visudo -cf %s"
   with_items: "{{ ad_sudoer_groups }}"
