@@ -28,6 +28,10 @@ This has the variables that all hosts will use for the ad, nis, and join roles. 
 # User that ansible will use to log in with
 playbook_remote_user: username
 
+# Directory that will be created that's used to ensure idempotence for 
+# things that were done that doesn't have built-in idempotence
+playbook_metadata_dir: "/home/username/.ansible_metadata"
+
 # ------------------------------------------------------------------------
 # MKHOMEDIR VARS
 # ------------------------------------------------------------------------
@@ -35,9 +39,6 @@ playbook_remote_user: username
 # Whether or not to run the mkhomedir role to automatically create a 
 # directory on login using oddjob-mkhomedir.
 automatically_mkhomedir: true
-
-# Look at the AD AND REALMD VARS section for the directory it will create 
-# it in
 
 # ... (see group_vars/all.yml.example for more)
 
@@ -95,4 +96,3 @@ Here is a list of files that *could be* changed/created by the playbook:
 
 The only files that will be completely 100% clobbered (as opposed to just changing a few lines) are:
 - /etc/realmd.conf
-
