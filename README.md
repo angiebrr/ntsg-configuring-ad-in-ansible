@@ -107,7 +107,7 @@ ntp_servers:
 # domain as well.
 ad_domain: AD.DOMAIN.COM
 
-# (See ad/defaults/main.yml for the rest of the file)
+# (See ad/defaults/main.yml.example for the rest of the file)
 
 ```
 
