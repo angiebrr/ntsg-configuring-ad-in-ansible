@@ -9,7 +9,7 @@ playbook_remote_user: username
 
 # Directory that will be created that's used to ensure idempotence for 
 # things that were done that doesn't have built-in idempotence
-playbook_metadata_dir: "~/.ansible_metadata"
+playbook_metadata_dir: ".ansible_metadata"
 
 # ------------------------------------------------------------------------
 # MKHOMEDIR VARS

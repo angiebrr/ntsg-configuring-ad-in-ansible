@@ -40,7 +40,7 @@
 
 - name: "Ensure that the metadata directory used for idempotence is created"
   file: 
-    path: "{{ playbook_metadata_dir }}"
+    path: "{{ ansible_env.HOME }}/{{ playbook_metadata_dir }}"
     state: directory
 
 - name: "Ensure that that metadata file for mkhomedir is present"
