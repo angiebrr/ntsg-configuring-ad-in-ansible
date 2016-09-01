@@ -33,12 +33,20 @@ playbook_remote_user: username
 playbook_metadata_dir: "/home/username/.ansible_metadata"
 
 # ------------------------------------------------------------------------
-# MKHOMEDIR VARS
+# NTP VARS
 # ------------------------------------------------------------------------
 
-# Whether or not to run the mkhomedir role to automatically create a 
-# directory on login using oddjob-mkhomedir.
-automatically_mkhomedir: true
+timezone: "America/Boise"
+
+# Whether or not you want to use the pool servers that come default with
+# chrony, or if you want to specify an NTP server below in ntp_server.
+use_default_ntp_servers: false
+
+# Your preferred ntp servers. This has no effect if use_default_ntp_server
+# is true.
+ntp_servers: 
+  - addr: 0.pool.ntp.org
+  - addr: 1.pool.ntp.org
 
 # ... (see group_vars/all.yml.example for more)
 
