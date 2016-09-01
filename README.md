@@ -14,7 +14,7 @@ So far, only `CentOS 7` machines are supported in this playbook because of the r
 - Join server(s) to an active directory domain (it will even provision your computer and add an entry for the computer in AD for you!)
 - There is an option to only allow a certain number of AD groups to be able to log in
 - There is an option to add certain groups as sudo users
-- At the end of the playbook, it will gather all of the files that were backed up and put them in the backup directory. By default, that is `/etc/backups`, but that can be changed if needed.
+- At the end of the playbook, it will gather all of the files that were backed up and put them in the backup directory on the remote server. By default, that is `/etc/backups`, but that can be changed if needed.
 
 ## Variable Files
 
