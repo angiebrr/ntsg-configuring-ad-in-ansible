@@ -28,6 +28,10 @@ This has the variables that all hosts will use for the ad, nis, and join roles. 
 # User that ansible will use to log in with
 playbook_remote_user: username
 
+# Directory that will be created that's used to ensure idempotence for 
+# things that were done that doesn't have built-in idempotence
+playbook_metadata_dir: "/home/username/.ansible_metadata"
+
 # ------------------------------------------------------------------------
 # MKHOMEDIR VARS
 # ------------------------------------------------------------------------
@@ -35,9 +39,6 @@ playbook_remote_user: username
 # Whether or not to run the mkhomedir role to automatically create a 
 # directory on login using oddjob-mkhomedir.
 automatically_mkhomedir: true
-
-# Look at the AD AND REALMD VARS section for the directory it will create 
-# it in
 
 # ... (see group_vars/all.yml.example for more)
 
@@ -96,3 +97,8 @@ Here is a list of files that *could be* changed/created by the playbook:
 The only files that will be completely 100% clobbered (as opposed to just changing a few lines) are:
 - /etc/realmd.conf
 
+## Unexpected Behavior
+
+If this playbook seems to not be changing something when it actually should be, be sure to first try to delete the `playbook_metadata_dir`. This directory was created because a couple of commands made it really difficult to test for idempotence (such as `authconfig` and `realm permit`), and so files were created that says, "Hey, these commands ran!" 
+
+A potential problem with this is that, if `authconfig` or `realm permit` or `realm deny` get ran again, then the playbook's perception of what is changed and what isn't changed is incomplete. SO, if all else fails, delete the metadata directory to start on a "clean slate".
