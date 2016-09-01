@@ -22,7 +22,7 @@
   remote_user: "{{ playbook_remote_user }}"
   become: true
   roles:
-    - { role: mkhomedir, when: automatically_mkhomedir }
+    - mkhomedir
 
 # ------------------------------------------------------------------------
 # ACTIVE DIRECTORY CONFIGURATION

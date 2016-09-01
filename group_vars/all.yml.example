@@ -12,17 +12,6 @@ playbook_remote_user: username
 playbook_metadata_dir: "/home/username/.ansible_metadata"
 
 # ------------------------------------------------------------------------
-# MKHOMEDIR VARS
-# ------------------------------------------------------------------------
-
-# Whether or not to run the mkhomedir role to automatically create a 
-# directory on login using oddjob-mkhomedir.
-automatically_mkhomedir: true
-
-# Look at the AD AND REALMD VARS section for the directory it will create 
-# it in
-
-# ------------------------------------------------------------------------
 # NTP VARS
 # ------------------------------------------------------------------------
 
