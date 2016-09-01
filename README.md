@@ -12,11 +12,12 @@ You will need to do a little bit of setup before using this playbook. The first 
 
 - `group_vars/all.yml`
 - `group_vars/vault.yml`
+- `roles/ad/defaults/main.yml`
 - `hosts`
 
 ### all.yml
 
-This has the variables that all hosts will use for the ad, nis, and join roles. There is an example yml file that you template off of. This file also has descriptions of each variable so you know exactly what you are setting.
+This has the variables that either all hosts will use or will need to use. You will need to copy the template file, `all.yml.example`, and create your custom file `all.yml`. This file also has descriptions of each variable so you know exactly what you are setting. 
 
 ```yaml
 # group_vars/all.yml.example
@@ -33,22 +34,21 @@ playbook_remote_user: username
 playbook_metadata_dir: "/home/username/.ansible_metadata"
 
 # ------------------------------------------------------------------------
-# NTP VARS
+# REALMD HOST NAME OVERRIDE
 # ------------------------------------------------------------------------
 
-timezone: "America/Boise"
+# If you want to override the entire name of the computer explicitly, then
+# include this variable. This should be done on a per-host basis and NOT in 
+# this file (i.e. put it in group_vars/myhostname.yml).
+# realmd_computer_name_override: "MYCOMPUTERNAME"
 
-# Whether or not you want to use the pool servers that come default with
-# chrony, or if you want to specify an NTP server below in ntp_server.
-use_default_ntp_servers: false
-
-# Your preferred ntp servers. This has no effect if use_default_ntp_server
-# is true.
-ntp_servers: 
-  - addr: 0.pool.ntp.org
-  - addr: 1.pool.ntp.org
-
-# ... (see group_vars/all.yml.example for more)
+# ------------------------------------------------------------------------
+# VAULT VARS
+# ------------------------------------------------------------------------
+# Be sure to include these variables in your own group_vars/vault.yml file
+# Note that this user needs to be able add/remove computers
+# vault_ad_user: <AD username>
+# vault_ad_pass: <AD password>
 
 ```
 
@@ -71,9 +71,49 @@ $ ansible-vault create group_vars/vault.yml
 
 For more information on using `ansible-vault`, please visit this the ansible documentation: [Ansible Vault](http://docs.ansible.com/ansible/playbooks_vault.html "Ansible's Documentation for Vault") 
 
+### ad/defaults/main.yml
+
+These variables should most definitely be modified to meet your active-directory needs. This file also has descriptions of each variable so you know exactly what you are setting.
+
+```yaml
+# roles/ad/defaults/main.yml
+
+# ------------------------------------------------------------------------
+# AD DEFAULT VARIABLES
+# ------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------
+# NTP VARS
+# ------------------------------------------------------------------------
+
+timezone: "America/Boise"
+
+# Whether or not you want to use the pool servers that come default with
+# chrony, or if you want to specify an NTP server below in ntp_server.
+use_default_ntp_servers: false
+
+# Your preferred ntp servers. This has no effect if use_default_ntp_server
+# is true.
+ntp_servers: 
+  - addr: 0.pool.ntp.org
+  - addr: 1.pool.ntp.org
+
+# ------------------------------------------------------------------------
+# AD AND REALMD VARS
+# See https://www.freedesktop.org/software/realmd/docs/realmd-conf.html
+# ------------------------------------------------------------------------
+
+# The active directory realm / domain. Will be used as the keroberos 
+# domain as well.
+ad_domain: AD.DOMAIN.COM
+
+# (See ad/defaults/main.yml for the rest of the file)
+
+```
+
 ### hosts
 
-This, as usual, contains the host information of the machines that will run this playbook (i.e. the inventory)
+This, as usual, contains the host information of the machines that will run this playbook (i.e. the inventory). There is a template file, `hosts.example`, that you can use if you wish.
 
 ## Provision the machine(s) in hosts
 
