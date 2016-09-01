@@ -96,3 +96,9 @@ Here is a list of files that *could be* changed/created by the playbook:
 
 The only files that will be completely 100% clobbered (as opposed to just changing a few lines) are:
 - /etc/realmd.conf
+
+## Unexpected Behavior
+
+If this playbook seems to not be changing something when it actually should be, be sure to first try to delete the `playbook_metadata_dir`. This directory was created because a couple of commands made it really difficult to test for idempotence (such as `authconfig` and `realm permit`), and so files were created that says, "Hey, these commands ran!" 
+
+A potential problem with this is that, if `authconfig` or `realm permit` or `realm deny` get ran again, then the playbook's perception of what is changed and what isn't changed is incomplete. SO, if all else fails, delete the metadata directory to start on a "clean slate".
