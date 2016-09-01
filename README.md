@@ -9,8 +9,8 @@ So far, only `CentOS 7` machines are supported in this playbook because of the r
 ### What this playbook can do
 
 - Set up an automatic creation of home directories upon login
-- Configure the correct timezone and chrony settings for your server(s)
-- Update your `sshd_config` file to allow password authentication
+- Configure the correct timezone and chrony settings
+- Update your `sshd_config` file(s) to allow password authentication
 - Join server(s) to an active directory domain (it will even provision your computer and add an entry for the computer in AD for you!)
 - There is an option to only allow a certain number of AD groups to be able to log in
 - There is an option to add certain groups as sudo users
