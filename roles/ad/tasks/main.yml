@@ -137,7 +137,7 @@
 # ALLOW ONLY A SPECIFIED LIST OF GROUPS TO LOGIN
 # ------------------------------------------------------------------------
 
-- name: "Ensure that that metadata file for mkhomedir is present"
+- name: "Ensure that that metadata file for permitting ad groups is present"
   file:
     path: "{{ playbook_metadata_full_path }}/{{ ad_domain.lower() }}_ad_allow"
     state: touch
