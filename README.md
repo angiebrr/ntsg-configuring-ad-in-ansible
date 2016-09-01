@@ -115,10 +115,6 @@ ad_domain: AD.DOMAIN.COM
 
 This, as usual, contains the host information of the machines that will run this playbook (i.e. the inventory). There is a template file, `hosts.example`, that you can use if you wish.
 
-## Provision the machine(s) in hosts
-
-Before running this playbook, you have to provision the machines in your hosts file in Active Directory in Windows, as I haven't found a way to automate this. All you need to do is add a computer under the AD domain and make it the same name as the hostname of the linux machine.
-
 ## Running the playbook
 
 A typical run of the playbook will look something like this:
