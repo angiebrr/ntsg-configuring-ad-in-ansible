@@ -6,6 +6,16 @@ This playbook joins a machine to an AD domain.
 
 So far, only `CentOS 7` machines are supported in this playbook because of the reliance of `realmd`. The playbook may be updated in the future to support `CentOS 6` machines, as you can use `adcli` to join machines to active directory, but this is much more of a manual process.
 
+### What this playbook can do
+
+- Set up an automatic creation of home directories upon login
+- Configure the correct timezone and chrony settings for your server(s)
+- Update your `sshd_config` file to allow password authentication
+- Join server(s) to an active directory domain (it will even provision your computer and add an entry for the computer in AD for you!)
+- There is an option to only allow a certain number of AD groups to be able to log in
+- There is an option to add certain groups as sudo users
+- At the end of the playbook, it will gather all of the files that were backed up and put them in the backup directory. By default, that is `/etc/backups`, but that can be changed if needed.
+
 ## Variable Files
 
 You will need to do a little bit of setup before using this playbook. The first thing to do is to make sure that you have the following variable and host files filled out:
