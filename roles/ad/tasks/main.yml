@@ -142,6 +142,11 @@
     path: "{{ playbook_metadata_dir }}"
     state: directory
 
+- name: "Ensure that that metadata file for mkhomedir is present"
+  file:
+    path: "{{ playbook_metadata_dir }}/{{ ad_domain.lower() }}_ad_allow"
+    state: touch
+
 - name: "Check if we have already added these groups"
   command: /bin/bash -c "/bin/cat {{ playbook_metadata_dir }}/{{ ad_domain.lower() }}_ad_allow"
   register: ad_allow_metadata
@@ -153,6 +158,10 @@
   set_fact:
     realmd_groups_to_add: "{{ realmd_allowed_groups|map(attribute='group_name')|list|difference(ad_allow_metadata.stdout_lines)|list }}"
   always_run: yes
+
+- debug: 
+    var: realmd_groups_to_add
+    verbosity: 3
 
 - name: "Deny all users and groups to log in to AD domain"
   command: /usr/sbin/realm deny -R {{ ad_domain.lower() }} --all
