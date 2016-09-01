@@ -52,7 +52,7 @@
 
 - name: Update authentication mechanism to tell oddjob to create the directory automatically upon login
   command: /usr/sbin/authconfig --enablemkhomedir --update
-  when: "success" in mkhomedir_metadata.stdout
+  when: '"success" in mkhomedir_metadata.stdout'
 
 - name: "Register the metadata file for mkhomedir"
   lineinfile:
