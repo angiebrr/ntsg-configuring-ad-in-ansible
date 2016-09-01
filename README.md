@@ -73,10 +73,10 @@ For more information on using `ansible-vault`, please visit this the ansible doc
 
 ### ad/defaults/main.yml
 
-These variables should most definitely be modified to meet your active-directory needs. This file also has descriptions of each variable so you know exactly what you are setting.
+These variables should most definitely be modified to meet your active-directory needs. You will need to copy the template file, `main.yml.example`, and create your custom file `main.yml`. This file also has descriptions of each variable so you know exactly what you are setting.
 
 ```yaml
-# roles/ad/defaults/main.yml
+# roles/ad/defaults/main.yml.example
 
 # ------------------------------------------------------------------------
 # AD DEFAULT VARIABLES
