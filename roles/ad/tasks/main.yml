@@ -137,18 +137,13 @@
 # ALLOW ONLY A SPECIFIED LIST OF GROUPS TO LOGIN
 # ------------------------------------------------------------------------
 
-- name: "Create the metadata directory used for idempotence"
-  file: 
-    path: "{{ ansible_env.HOME }}/{{ playbook_metadata_dir }}"
-    state: directory
-
 - name: "Ensure that that metadata file for mkhomedir is present"
   file:
-    path: "{{ playbook_metadata_dir }}/{{ ad_domain.lower() }}_ad_allow"
+    path: "{{ playbook_metadata_full_path }}/{{ ad_domain.lower() }}_ad_allow"
     state: touch
 
 - name: "Check if we have already added these groups"
-  command: /bin/bash -c "/bin/cat {{ playbook_metadata_dir }}/{{ ad_domain.lower() }}_ad_allow"
+  command: /bin/bash -c "/bin/cat {{ playbook_metadata_full_path }}/{{ ad_domain.lower() }}_ad_allow"
   register: ad_allow_metadata
   always_run: yes
   changed_when: no
@@ -174,7 +169,7 @@
 
 - name: "Register the metadata file for allowing ad groups"
   lineinfile:
-    dest: "{{ playbook_metadata_dir }}/{{ ad_domain.lower() }}_ad_allow"
+    dest: "{{ playbook_metadata_full_path }}/{{ ad_domain.lower() }}_ad_allow"
     regexp: "^{{ item }}"
     line: "{{ item }}"
   with_items: "{{ realmd_groups_to_add }}"

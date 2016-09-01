@@ -38,18 +38,23 @@
 # USE AUTHCONFIG TO MAKE ODDJOBD CREATE DIRECTORY UPON LOGIN
 # ------------------------------------------------------------------------
 
+- name: "Register the full path of the metadata directory"
+  set_fact:
+    playbook_metadata_full_path: "{{ ansible_env.HOME }}/{{ playbook_metadata_dir }}"
+  always_run: yes
+
 - name: "Ensure that the metadata directory used for idempotence is created"
   file: 
-    path: "{{ ansible_env.HOME }}/{{ playbook_metadata_dir }}"
+    path: "{{ playbook_metadata_full_path }}"
     state: directory
 
 - name: "Ensure that that metadata file for mkhomedir is present"
   file:
-    path: "{{ playbook_metadata_dir }}/mkhomedir_authconfig"
+    path: "{{ playbook_metadata_full_path }}/mkhomedir_authconfig"
     state: touch
 
 - name: "Check if authconfig has been used to enable a home directory to be made upon login"
-  command: /bin/bash -c "/bin/cat {{ playbook_metadata_dir }}/mkhomedir_authconfig"
+  command: /bin/bash -c "/bin/cat {{ playbook_metadata_full_path }}/mkhomedir_authconfig"
   register: mkhomedir_metadata
   always_run: yes
   changed_when: no
@@ -60,6 +65,6 @@
 
 - name: "Register the metadata file for mkhomedir"
   lineinfile:
-    dest: "{{ playbook_metadata_dir }}/mkhomedir_authconfig"
+    dest: "{{ playbook_metadata_full_path }}/mkhomedir_authconfig"
     regexp: "^success"
     line: "success"
