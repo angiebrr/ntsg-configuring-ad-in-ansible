@@ -6,6 +6,16 @@ This playbook joins a machine to an AD domain.
 
 So far, only `CentOS 7` machines are supported in this playbook because of the reliance of `realmd`. The playbook may be updated in the future to support `CentOS 6` machines, as you can use `adcli` to join machines to active directory, but this is much more of a manual process.
 
+### What this playbook can do
+
+- Set up an automatic creation of home directories upon login
+- Configure the correct timezone and chrony settings
+- Update your `sshd_config` file(s) to allow password authentication
+- Join server(s) to an active directory domain (it will even provision your computer and add an entry for the computer in AD for you!)
+- There is an option to only allow a certain number of AD groups to be able to log in
+- There is an option to add certain groups as sudo users
+- At the end of the playbook, it will gather all of the files that were backed up and put them in the backup directory on the remote server. By default, that is `/etc/backups`, but that can be changed if needed.
+
 ## Variable Files
 
 You will need to do a little bit of setup before using this playbook. The first thing to do is to make sure that you have the following variable and host files filled out:
@@ -73,10 +83,10 @@ For more information on using `ansible-vault`, please visit this the ansible doc
 
 ### ad/defaults/main.yml
 
-These variables should most definitely be modified to meet your active-directory needs. This file also has descriptions of each variable so you know exactly what you are setting.
+These variables should most definitely be modified to meet your active-directory needs. You will need to copy the template file, `main.yml.example`, and create your custom file `main.yml`. This file also has descriptions of each variable so you know exactly what you are setting.
 
 ```yaml
-# roles/ad/defaults/main.yml
+# roles/ad/defaults/main.yml.example
 
 # ------------------------------------------------------------------------
 # AD DEFAULT VARIABLES
@@ -107,17 +117,13 @@ ntp_servers:
 # domain as well.
 ad_domain: AD.DOMAIN.COM
 
-# (See ad/defaults/main.yml for the rest of the file)
+# (See ad/defaults/main.yml.example for the rest of the file)
 
 ```
 
 ### hosts
 
 This, as usual, contains the host information of the machines that will run this playbook (i.e. the inventory). There is a template file, `hosts.example`, that you can use if you wish.
-
-## Provision the machine(s) in hosts
-
-Before running this playbook, you have to provision the machines in your hosts file in Active Directory in Windows, as I haven't found a way to automate this. All you need to do is add a computer under the AD domain and make it the same name as the hostname of the linux machine.
 
 ## Running the playbook
 
