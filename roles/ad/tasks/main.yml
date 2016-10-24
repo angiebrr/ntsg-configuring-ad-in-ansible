@@ -149,20 +149,22 @@
   always_run: yes
   changed_when: no
   ignore_errors: yes
+  when: realmd_allowed_groups | length > 0
 
 - name: "Register the difference between the groups that have been added and the groups listed in the playbook"
   set_fact:
     realmd_groups_to_add: "{{ realmd_allowed_groups|map(attribute='group_name')|list|difference(ad_allow_metadata.stdout_lines)|list }}"
   always_run: yes
+  when: realmd_allowed_groups | length > 0
 
 - name: "Deny all users and groups to log in to AD domain"
   command: /usr/sbin/realm deny -R {{ ad_domain.lower() }} --all
-  when: realmd_groups_to_add | length > 0
+  when: (realmd_allowed_groups | length > 0) and (realmd_groups_to_add | length > 0)
 
 - name: "Allow certain groups to log in to AD domain"
   command: /usr/sbin/realm permit -R {{ ad_domain.lower() }} -g {{ item }}
   with_items: "{{ realmd_groups_to_add }}"
-  when: realmd_groups_to_add | length > 0
+  when: (realmd_allowed_groups | length > 0) and (realmd_groups_to_add | length > 0)
 
 - name: "Register the metadata file for allowing ad groups"
   lineinfile:
@@ -170,6 +172,7 @@
     regexp: "^{{ item }}"
     line: "{{ item }}"
   with_items: "{{ realmd_groups_to_add }}"
+  when: (realmd_allowed_groups | length > 0) and (realmd_groups_to_add | length > 0)
 
 # ------------------------------------------------------------------------
 # ALLOW ONLY A SPECIFIED LIST OF GROUPS TO LOGIN
@@ -180,6 +183,7 @@
     name: "{{ item.group_name }}"
     state: present
   with_items: "{{ ad_sudoer_groups }}"
+  when: ad_sudoer_groups | length > 0
 
 - name: "Add the comment marker for the beginning of the ansible block for the sudoers file."
   lineinfile:
@@ -210,3 +214,4 @@
     insertafter: "^{{ ad_sudoer_comment_begin_block_regex }}"
     validate: "visudo -cf %s"
   with_items: "{{ ad_sudoer_groups }}"
+  when: ad_sudoer_groups | length > 0
