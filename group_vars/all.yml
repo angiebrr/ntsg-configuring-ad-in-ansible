@@ -16,11 +16,3 @@ playbook_metadata_dir: "/home/username/.ansible_metadata"
 # include this variable. This should be done on a per-host basis and NOT in 
 # this file (i.e. put it in group_vars/myhostname.yml).
 # realmd_computer_name_override: "MYCOMPUTERNAME"
-
-# ------------------------------------------------------------------------
-# VAULT VARS
-# ------------------------------------------------------------------------
-# Be sure to include these variables in your own defaults/vault.yml file
-# Note that this user needs to be able add/remove computers
-# vault_ad_user: <AD username>
-# vault_ad_pass: <AD password>
