@@ -128,7 +128,7 @@
 
 - name: "Join {{ ansible_hostname }} to AD domain, {{ ad_domain.upper() }}"
   expect:
-    command: /bin/bash -c "/usr/sbin/realm join --user={{ vault_ad_user }} {{ ad_domain.upper() }}"
+    command: /bin/bash -c "/usr/sbin/realm join --membership-software=adcli --user={{ vault_ad_user }} {{ ad_domain.upper() }}"
     responses:
       (?i)password: "{{ vault_ad_pass }}"
   when: ad_domain.lower() not in joined_domains.stdout
@@ -175,7 +175,7 @@
 # ALLOW ONLY A SPECIFIED LIST OF GROUPS TO LOGIN
 # ------------------------------------------------------------------------
 
-- name: "Ensure the list of groups for passwordless sudo exist"
+- name: "Ensure the list of groups for sudo exist"
   group:
     name: "{{ item.group_name }}"
     state: present
