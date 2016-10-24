@@ -36,9 +36,6 @@ This has the variables that either all hosts will use or will need to use. You w
 # ANSIBLE SPECIFIC VARS
 # ------------------------------------------------------------------------
 
-# User that ansible will use to log in with
-playbook_remote_user: username
-
 # Directory that will be created that's used to ensure idempotence for 
 # things that were done that doesn't have built-in idempotence
 playbook_metadata_dir: "/home/username/.ansible_metadata"
