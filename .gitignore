@@ -1,4 +1,4 @@
 *.retry
 group_vars/*.yml
-roles/ad/defaults/*.yml
+defaults/*.yml
 hosts
