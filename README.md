@@ -21,8 +21,8 @@ So far, only `CentOS 7` machines are supported in this playbook because of the r
 You will need to do a little bit of setup before using this playbook. The first thing to do is to make sure that you have the following variable and host files filled out:
 
 - `group_vars/all.yml`
-- `group_vars/vault.yml`
-- `roles/ad/defaults/main.yml`
+- `defaults/vault.yml`
+- `defaults/ad.yml`
 - `hosts`
 
 ### all.yml
@@ -55,7 +55,7 @@ playbook_metadata_dir: "/home/username/.ansible_metadata"
 # ------------------------------------------------------------------------
 # VAULT VARS
 # ------------------------------------------------------------------------
-# Be sure to include these variables in your own group_vars/vault.yml file
+# Be sure to include these variables in your own defaults/vault.yml file
 # Note that this user needs to be able add/remove computers
 # vault_ad_user: <AD username>
 # vault_ad_pass: <AD password>
@@ -67,7 +67,7 @@ playbook_metadata_dir: "/home/username/.ansible_metadata"
 You will also need to create a vault.yml file with the following variables inside:
 
 ```yaml
-# group_vars/vault.yml
+# defaults/vault.yml
 
 vault_ad_user: <AD username>
 vault_ad_pass: <AD password>
@@ -76,17 +76,17 @@ vault_ad_pass: <AD password>
 It is recommended that you create this file using `ansible-vault` like so:
 
 ```bash
-$ ansible-vault create group_vars/vault.yml
+$ ansible-vault create defaults/vault.yml
 ```
 
 For more information on using `ansible-vault`, please visit this the ansible documentation: [Ansible Vault](http://docs.ansible.com/ansible/playbooks_vault.html "Ansible's Documentation for Vault") 
 
-### ad/defaults/main.yml
+### defaults/ad.yml
 
-These variables should most definitely be modified to meet your active-directory needs. You will need to copy the template file, `main.yml.example`, and create your custom file `main.yml`. This file also has descriptions of each variable so you know exactly what you are setting.
+These variables should most definitely be modified to meet your active-directory needs. You will need to copy the template file, `ad.yml.examle`, and create your custom file `ad.yml`. This file also has descriptions of each variable so you know exactly what you are setting.
 
 ```yaml
-# roles/ad/defaults/main.yml.example
+# defaults/ad.yml.example
 
 # ------------------------------------------------------------------------
 # AD DEFAULT VARIABLES
@@ -117,7 +117,7 @@ ntp_servers:
 # domain as well.
 ad_domain: AD.DOMAIN.COM
 
-# (See ad/defaults/main.yml.example for the rest of the file)
+# (See defaults/ad.yml.example for the rest of the file)
 
 ```
 
@@ -136,7 +136,7 @@ $ ansible-playbook site.yml --ask-vault-pass
 The `--ask-vault-pass` parameter will ask for the password to your vault-created file with the variables `vault_ad_user` and `vault_ad_pass`.
 
 There are a couple of things to keep in mind when running this playbook: 
-- Due to the necessity of using authconfig and adcli (which are can be only called from the command module), running the playbook in its entirety will always return a "changed" of 3. Later versions of this playbook will strive to change that behavior.
+- Due to the necessity of using authconfig, adcli, and realmd (which are can be only called from the command module), there are metadata directories used to ensure idempotence. If you manually change authconfig
 - Every changed file is backed up in place, so do not despair if something goes awry! 
 
 Here is a list of files that *could be* changed/created by the playbook:
@@ -151,8 +151,10 @@ Here is a list of files that *could be* changed/created by the playbook:
 The only files that will be completely 100% clobbered (as opposed to just changing a few lines) are:
 - /etc/realmd.conf
 
-## Unexpected Behavior
+## Known Issues
 
-If this playbook seems to not be changing something when it actually should be, be sure to first try to delete the `playbook_metadata_dir`. This directory was created because a couple of commands made it really difficult to test for idempotence (such as `authconfig` and `realm permit`), and so files were created that says, "Hey, these commands ran!" 
+### Metadata problems
+If this playbook seems to not be changing something when it actually should be, be sure to first try to delete the `playbook_metadata_dir`. This directory was created because a couple of commands made it really difficult to test for idempotence (such as `authconfig` and `realm permit`), and so files were created that says, "Hey, these commands ran!" A potential problem with this is that, if `authconfig` or `realm permit` or `realm deny` get ran again, then the playbook's perception of what is changed and what isn't changed is incomplete. SO, if all else fails, delete the metadata directory to start on a "clean slate".
 
-A potential problem with this is that, if `authconfig` or `realm permit` or `realm deny` get ran again, then the playbook's perception of what is changed and what isn't changed is incomplete. SO, if all else fails, delete the metadata directory to start on a "clean slate".
+### Permission Denied
+Another problem is if you get a "Permission Denied" when you know that the user has add/remove privileges and the password you put in `defaults/vault.yml` is correct, this may be due to the computer already existing but in a different OU than what you specified in `defaults/ad.yml`. This is fixed if you delete the computer in AD or if you move the computer where ansible is expecting it. 
