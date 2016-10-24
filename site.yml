@@ -19,7 +19,6 @@
 # ------------------------------------------------------------------------
 - name: Make sure a home directory is created on login with oddjob-mkhomedir
   hosts: all
-  remote_user: "{{ playbook_remote_user }}"
   become: true
   roles:
     - mkhomedir
@@ -29,7 +28,6 @@
 # ------------------------------------------------------------------------
 - name: Bind an Active Directory domain to our inventory machines. 
   hosts: all
-  remote_user: "{{ playbook_remote_user }}"
   become: true
   vars_files:
     - defaults/vault.yml
@@ -42,7 +40,6 @@
 # ------------------------------------------------------------------------
 - name: Move all backed up files created by this playbook to a centralized location.
   hosts: all
-  remote_user: "{{ playbook_remote_user }}"
   become: true
   roles:
     - backups
