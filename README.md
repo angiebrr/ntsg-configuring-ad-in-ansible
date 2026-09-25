@@ -21,7 +21,7 @@
 
 An Ansible playbook that joins CentOS 7 servers to an Active Directory domain with `realmd`, so people can log in with their AD account.
 
-I wrote this in 2016 as the Linux sysadmin for NTSG, a research group at the University of Montana. It's the follow-up to [combining-ad-nis-ansible](https://github.com/angiebrr/combining-ad-nis-ansible), which kept NIS around for identities and made you create each computer in AD by hand first. 
+I wrote this in 2016 as the Linux sysadmin for NTSG, a research group at the University of Montana. It's the follow-up to [ntsg-combining-ad-nis-ansible](https://github.com/angiebrr/ntsg-combining-ad-nis-ansible), which kept NIS around for identities and made you create each computer in AD by hand first. 
 
 **Tech:** Ansible, realmd, adcli, SSSD, Kerberos, oddjob-mkhomedir, chrony, CentOS 7
 
